@@ -56,7 +56,6 @@ static void MX_I2C1_Init(void);
 
 //All definitions needed for acceleration functions
 #define MPU6050_ADDR 0xD0
-
 #define SMPLRT_DIV_REG 0x19
 #define GYRO_CONFIG_REG 0x1B
 #define ACCEL_CONFIG_REG 0x1C
@@ -67,17 +66,24 @@ static void MX_I2C1_Init(void);
 
 void accelInit(void)
 {
+  //Inititalizes required variables
 	uint8_t check,data;
 
+  //Reads the data at WHO_AM_I_REG to wake up the sensor
 	HAL_I2C_Mem_Read (&hi2c1, MPU6050_ADDR,WHO_AM_I_REG,1,&check,1,1000);
+
+  //Checks the data in the register
 	if(check == 104)
 	{
+    //Initializes the power management register
 		data = 0;
 		HAL_I2C_Mem_Write(&hi2c1, MPU6050_ADDR,PWR_MGMT_1_REG,1,&check,1,1000);
 
+    //Initializes SMPLRT register
 		data = 0x07;
 		HAL_I2C_Mem_Write(&hi2c1, MPU6050_ADDR,SMPLRT_DIV_REG,1,&check,1,1000);
 
+    //Initializes the acceleration configuration register
 		data = 0x00;
 		HAL_I2C_Mem_Write(&hi2c1, MPU6050_ADDR,ACCEL_CONFIG_REG,1,&check,1,1000);
 	}
@@ -85,25 +91,36 @@ void accelInit(void)
 
 void accelRead(void)
 {
+  //Creates array for data storage
 	uint8_t data[6];
+  //Reads data from the output register
 	HAL_I2C_Mem_Read (&hi2c1, MPU6050_ADDR,ACCEL_XOUT_H_REG,1,data,1,1000);
 
+  //Defines variables for use by main
 	int16_t xRaw,yRaw,zRaw,xG,yG,zG;
+
+  //Reads 2 values for x,y, and z from the array with the raw data
+  //Stores in raw variables
 	xRaw = (int16_t)(data[0] << 8 | data[1]);
 	yRaw = (int16_t)(data[2] << 8 | data[3]);
 	zRaw = (int16_t)(data[4] << 8 | data[5]);
 
+  //Converts each variable to g (9.81m/s^2)
 	xG = xRaw/16384.0;
 	yG = yRaw/16384.0;
 	zG = zRaw/16384.0;
 }
 float computeGThreshold(int16_t s1, int16_t s2,int16_t s3)
 {
+  //This function takes three sums of x, y, and z values and returns the magnitude of the vector they create
 	float total = s1*s1 + s2*s2 + s3*s3;
 	return (sqrt(total));
+  //This creates a threshold for what is a step and what isn't
 }
 int checkThreshold (int16_t x,int16_t y,int16_t z, float threshold)
 {
+  //Function checks whether the current x,y, and z acceleration values 
+  //pass the step threshold
 	if(sqrt(x*x + y*y +z*z) > threshold)
 	{
 		return 1;
@@ -152,13 +169,17 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+
+  //Initializes LCD and accelerometer
   lcdInit();
   accelInit();
 
+  //Intitial settings for lcd
   putCursor(1,0);
   sendString("Steps: ");
   putCursor(1,1);
 
+  //Defines variabbles required to use accelerometer
   int thresholdCounter = 100;
   int i = 0;
   int steps = 0;
@@ -173,8 +194,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    //Read acceleromter
 	  accelRead();
+
     /* USER CODE END WHILE */
+    //This first phase last for 100 samples and creates a sum of all the x, y, and z accelerometer values
 	  if (i<thresholdCounter)
 	  {
 		  xSum += xG;
@@ -185,17 +209,20 @@ int main(void)
 	  }
 	  else if (i == thresholdCounter)
 	  {
+      //once those sums are computed, we compute the step threshold
 		  threshold = computeGThreshold(xSum,ySum,zSum);
 		  ++i;
 		  continue;
 	  }
 	  else
 	  {
+      //Checks whether the current x,y, and z values meet the requirements for step
 		  if (checkThreshold(xG,yG,zG,threshold) == 1)
 		  {
 			  steps+=1;
 		  }
 	  }
+    //Prints out the current number of steps
 	  sendString(steps);
     /* USER CODE BEGIN 3 */
   }
