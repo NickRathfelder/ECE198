@@ -350,12 +350,12 @@ Disassembly of section .text:
  80004d4:	4770      	bx	lr
  80004d6:	bf00      	nop
 
-080004d8 <lcd_send_cmd>:
+080004d8 <sendCmd>:
 extern I2C_HandleTypeDef hi2c1;  // change your handler here accordingly
 
 #define SLAVE_ADDRESS_LCD 0x4E // change this according to ur setup
 
-void lcd_send_cmd (char cmd)
+void sendCmd (char cmd)
 {
  80004d8:	b580      	push	{r7, lr}
  80004da:	b086      	sub	sp, #24
@@ -399,7 +399,7 @@ void lcd_send_cmd (char cmd)
  800051e:	9300      	str	r3, [sp, #0]
  8000520:	2304      	movs	r3, #4
  8000522:	214e      	movs	r1, #78	; 0x4e
- 8000524:	4803      	ldr	r0, [pc, #12]	; (8000534 <lcd_send_cmd+0x5c>)
+ 8000524:	4803      	ldr	r0, [pc, #12]	; (8000534 <sendCmd+0x5c>)
  8000526:	f000 ffa1 	bl	800146c <HAL_I2C_Master_Transmit>
 }
  800052a:	bf00      	nop
@@ -409,9 +409,9 @@ void lcd_send_cmd (char cmd)
  8000532:	bf00      	nop
  8000534:	20000028 	.word	0x20000028
 
-08000538 <lcd_send_data>:
+08000538 <sendData>:
 
-void lcd_send_data (char data)
+void sendData (char data)
 {
  8000538:	b580      	push	{r7, lr}
  800053a:	b086      	sub	sp, #24
@@ -454,7 +454,7 @@ void lcd_send_data (char data)
  800057e:	9300      	str	r3, [sp, #0]
  8000580:	2304      	movs	r3, #4
  8000582:	214e      	movs	r1, #78	; 0x4e
- 8000584:	4803      	ldr	r0, [pc, #12]	; (8000594 <lcd_send_data+0x5c>)
+ 8000584:	4803      	ldr	r0, [pc, #12]	; (8000594 <sendData+0x5c>)
  8000586:	f000 ff71 	bl	800146c <HAL_I2C_Master_Transmit>
 }
  800058a:	bf00      	nop
@@ -464,12 +464,12 @@ void lcd_send_data (char data)
  8000592:	bf00      	nop
  8000594:	20000028 	.word	0x20000028
 
-08000598 <lcd_put_cur>:
-		lcd_send_data (' ');
+08000598 <putCursor>:
+		sendData (' ');
 	}
 }
 
-void lcd_put_cur(int row, int col)
+void putCursor(int row, int col)
 {
  8000598:	b580      	push	{r7, lr}
  800059a:	b082      	sub	sp, #8
@@ -479,11 +479,11 @@ void lcd_put_cur(int row, int col)
     switch (row)
  80005a2:	687b      	ldr	r3, [r7, #4]
  80005a4:	2b00      	cmp	r3, #0
- 80005a6:	d003      	beq.n	80005b0 <lcd_put_cur+0x18>
+ 80005a6:	d003      	beq.n	80005b0 <putCursor+0x18>
  80005a8:	687b      	ldr	r3, [r7, #4]
  80005aa:	2b01      	cmp	r3, #1
- 80005ac:	d005      	beq.n	80005ba <lcd_put_cur+0x22>
- 80005ae:	e009      	b.n	80005c4 <lcd_put_cur+0x2c>
+ 80005ac:	d005      	beq.n	80005ba <putCursor+0x22>
+ 80005ae:	e009      	b.n	80005c4 <putCursor+0x2c>
     {
         case 0:
             col |= 0x80;
@@ -491,7 +491,7 @@ void lcd_put_cur(int row, int col)
  80005b2:	f043 0380 	orr.w	r3, r3, #128	; 0x80
  80005b6:	603b      	str	r3, [r7, #0]
             break;
- 80005b8:	e004      	b.n	80005c4 <lcd_put_cur+0x2c>
+ 80005b8:	e004      	b.n	80005c4 <putCursor+0x2c>
         case 1:
             col |= 0xC0;
  80005ba:	683b      	ldr	r3, [r7, #0]
@@ -501,21 +501,21 @@ void lcd_put_cur(int row, int col)
  80005c2:	bf00      	nop
     }
 
-    lcd_send_cmd (col);
+    sendCmd (col);
  80005c4:	683b      	ldr	r3, [r7, #0]
  80005c6:	b2db      	uxtb	r3, r3
  80005c8:	4618      	mov	r0, r3
- 80005ca:	f7ff ff85 	bl	80004d8 <lcd_send_cmd>
+ 80005ca:	f7ff ff85 	bl	80004d8 <sendCmd>
 }
  80005ce:	bf00      	nop
  80005d0:	3708      	adds	r7, #8
  80005d2:	46bd      	mov	sp, r7
  80005d4:	bd80      	pop	{r7, pc}
 
-080005d6 <lcd_init>:
+080005d6 <lcdInit>:
 
 
-void lcd_init (void)
+void lcdInit (void)
 {
  80005d6:	b580      	push	{r7, lr}
  80005d8:	af00      	add	r7, sp, #0
@@ -523,86 +523,86 @@ void lcd_init (void)
 	HAL_Delay(50);  // wait for >40ms
  80005da:	2032      	movs	r0, #50	; 0x32
  80005dc:	f000 fb40 	bl	8000c60 <HAL_Delay>
-	lcd_send_cmd (0x30);
+	sendCmd (0x30);
  80005e0:	2030      	movs	r0, #48	; 0x30
- 80005e2:	f7ff ff79 	bl	80004d8 <lcd_send_cmd>
+ 80005e2:	f7ff ff79 	bl	80004d8 <sendCmd>
 	HAL_Delay(5);  // wait for >4.1ms
  80005e6:	2005      	movs	r0, #5
  80005e8:	f000 fb3a 	bl	8000c60 <HAL_Delay>
-	lcd_send_cmd (0x30);
+	sendCmd (0x30);
  80005ec:	2030      	movs	r0, #48	; 0x30
- 80005ee:	f7ff ff73 	bl	80004d8 <lcd_send_cmd>
+ 80005ee:	f7ff ff73 	bl	80004d8 <sendCmd>
 	HAL_Delay(1);  // wait for >100us
  80005f2:	2001      	movs	r0, #1
  80005f4:	f000 fb34 	bl	8000c60 <HAL_Delay>
-	lcd_send_cmd (0x30);
+	sendCmd (0x30);
  80005f8:	2030      	movs	r0, #48	; 0x30
- 80005fa:	f7ff ff6d 	bl	80004d8 <lcd_send_cmd>
+ 80005fa:	f7ff ff6d 	bl	80004d8 <sendCmd>
 	HAL_Delay(10);
  80005fe:	200a      	movs	r0, #10
  8000600:	f000 fb2e 	bl	8000c60 <HAL_Delay>
-	lcd_send_cmd (0x20);  // 4bit mode
+	sendCmd (0x20);  // 4bit mode
  8000604:	2020      	movs	r0, #32
- 8000606:	f7ff ff67 	bl	80004d8 <lcd_send_cmd>
+ 8000606:	f7ff ff67 	bl	80004d8 <sendCmd>
 	HAL_Delay(10);
  800060a:	200a      	movs	r0, #10
  800060c:	f000 fb28 	bl	8000c60 <HAL_Delay>
 
   // dislay initialisation
-	lcd_send_cmd (0x28); // Function set --> DL=0 (4 bit mode), N = 1 (2 line display) F = 0 (5x8 characters)
+	sendCmd (0x28); // Function set --> DL=0 (4 bit mode), N = 1 (2 line display) F = 0 (5x8 characters)
  8000610:	2028      	movs	r0, #40	; 0x28
- 8000612:	f7ff ff61 	bl	80004d8 <lcd_send_cmd>
+ 8000612:	f7ff ff61 	bl	80004d8 <sendCmd>
 	HAL_Delay(1);
  8000616:	2001      	movs	r0, #1
  8000618:	f000 fb22 	bl	8000c60 <HAL_Delay>
-	lcd_send_cmd (0x08); //Display on/off control --> D=0,C=0, B=0  ---> display off
+	sendCmd (0x08); //Display on/off control --> D=0,C=0, B=0  ---> display off
  800061c:	2008      	movs	r0, #8
- 800061e:	f7ff ff5b 	bl	80004d8 <lcd_send_cmd>
+ 800061e:	f7ff ff5b 	bl	80004d8 <sendCmd>
 	HAL_Delay(1);
  8000622:	2001      	movs	r0, #1
  8000624:	f000 fb1c 	bl	8000c60 <HAL_Delay>
-	lcd_send_cmd (0x01);  // clear display
+	sendCmd (0x01);  // clear display
  8000628:	2001      	movs	r0, #1
- 800062a:	f7ff ff55 	bl	80004d8 <lcd_send_cmd>
+ 800062a:	f7ff ff55 	bl	80004d8 <sendCmd>
 	HAL_Delay(1);
  800062e:	2001      	movs	r0, #1
  8000630:	f000 fb16 	bl	8000c60 <HAL_Delay>
 	HAL_Delay(1);
  8000634:	2001      	movs	r0, #1
  8000636:	f000 fb13 	bl	8000c60 <HAL_Delay>
-	lcd_send_cmd (0x06); //Entry mode set --> I/D = 1 (increment cursor) & S = 0 (no shift)
+	sendCmd (0x06); //Entry mode set --> I/D = 1 (increment cursor) & S = 0 (no shift)
  800063a:	2006      	movs	r0, #6
- 800063c:	f7ff ff4c 	bl	80004d8 <lcd_send_cmd>
+ 800063c:	f7ff ff4c 	bl	80004d8 <sendCmd>
 	HAL_Delay(1);
  8000640:	2001      	movs	r0, #1
  8000642:	f000 fb0d 	bl	8000c60 <HAL_Delay>
-	lcd_send_cmd (0x0C); //Display on/off control --> D = 1, C and B = 0. (Cursor and blink, last two bits)
+	sendCmd (0x0C); //Display on/off control --> D = 1, C and B = 0. (Cursor and blink, last two bits)
  8000646:	200c      	movs	r0, #12
- 8000648:	f7ff ff46 	bl	80004d8 <lcd_send_cmd>
+ 8000648:	f7ff ff46 	bl	80004d8 <sendCmd>
 }
  800064c:	bf00      	nop
  800064e:	bd80      	pop	{r7, pc}
 
-08000650 <lcd_send_string>:
+08000650 <sendString>:
 
-void lcd_send_string (char *str)
+void sendString (char *str)
 {
  8000650:	b580      	push	{r7, lr}
  8000652:	b082      	sub	sp, #8
  8000654:	af00      	add	r7, sp, #0
  8000656:	6078      	str	r0, [r7, #4]
-	while (*str) lcd_send_data (*str++);
- 8000658:	e006      	b.n	8000668 <lcd_send_string+0x18>
+	while (*str) sendData (*str++);
+ 8000658:	e006      	b.n	8000668 <sendString+0x18>
  800065a:	687b      	ldr	r3, [r7, #4]
  800065c:	1c5a      	adds	r2, r3, #1
  800065e:	607a      	str	r2, [r7, #4]
  8000660:	781b      	ldrb	r3, [r3, #0]
  8000662:	4618      	mov	r0, r3
- 8000664:	f7ff ff68 	bl	8000538 <lcd_send_data>
+ 8000664:	f7ff ff68 	bl	8000538 <sendData>
  8000668:	687b      	ldr	r3, [r7, #4]
  800066a:	781b      	ldrb	r3, [r3, #0]
  800066c:	2b00      	cmp	r3, #0
- 800066e:	d1f4      	bne.n	800065a <lcd_send_string+0xa>
+ 800066e:	d1f4      	bne.n	800065a <sendString+0xa>
 }
  8000670:	bf00      	nop
  8000672:	bf00      	nop
@@ -646,25 +646,25 @@ int main(void)
   MX_I2C1_Init();
  8000690:	f000 f88a 	bl	80007a8 <MX_I2C1_Init>
   /* USER CODE BEGIN 2 */
-  lcd_init();
- 8000694:	f7ff ff9f 	bl	80005d6 <lcd_init>
+  lcdInit();
+ 8000694:	f7ff ff9f 	bl	80005d6 <lcdInit>
 
-  lcd_send_string ("Hello world");
+  sendString ("Hello world");
  8000698:	480b      	ldr	r0, [pc, #44]	; (80006c8 <main+0x4c>)
- 800069a:	f7ff ffd9 	bl	8000650 <lcd_send_string>
+ 800069a:	f7ff ffd9 	bl	8000650 <sendString>
 
   HAL_Delay(1000);
  800069e:	f44f 707a 	mov.w	r0, #1000	; 0x3e8
  80006a2:	f000 fadd 	bl	8000c60 <HAL_Delay>
 
-  lcd_put_cur(1,0);
+  putCursor(1,0);
  80006a6:	2100      	movs	r1, #0
  80006a8:	2001      	movs	r0, #1
- 80006aa:	f7ff ff75 	bl	8000598 <lcd_put_cur>
+ 80006aa:	f7ff ff75 	bl	8000598 <putCursor>
 
-  lcd_send_string("Cock");
+  sendString("Cock");
  80006ae:	4807      	ldr	r0, [pc, #28]	; (80006cc <main+0x50>)
- 80006b0:	f7ff ffce 	bl	8000650 <lcd_send_string>
+ 80006b0:	f7ff ffce 	bl	8000650 <sendString>
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)

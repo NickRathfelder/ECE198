@@ -152,12 +152,12 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  lcd_init();
+  lcdInit();
   accelInit();
 
-  lcd_put_cur(1,0);
-  lcd_send_string("Steps: ");
-  lcd_put_cur(1,1);
+  putCursor(1,0);
+  sendString("Steps: ");
+  putCursor(1,1);
 
   int thresholdCounter = 100;
   int i = 0;
@@ -196,7 +196,7 @@ int main(void)
 			  steps+=1;
 		  }
 	  }
-	  lcd_send_string(steps);
+	  sendString(steps);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

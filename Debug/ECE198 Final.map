@@ -90,7 +90,7 @@ Discarded input sections
  .text          0x0000000000000000        0x0 ./Core/Src/i2c-lcd.o
  .data          0x0000000000000000        0x0 ./Core/Src/i2c-lcd.o
  .bss           0x0000000000000000        0x0 ./Core/Src/i2c-lcd.o
- .text.lcd_clear
+ .text.clear
                 0x0000000000000000       0x2e ./Core/Src/i2c-lcd.o
  .group         0x0000000000000000        0xc ./Core/Src/main.o
  .group         0x0000000000000000        0xc ./Core/Src/main.o
@@ -3054,21 +3054,21 @@ LOAD c:/st/stm32cubeide_1.10.1/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.ext
                 0x00000000080004d4                __aeabi_idiv0
                 0x00000000080004d4                __aeabi_ldiv0
  *(.text*)
- .text.lcd_send_cmd
+ .text.sendCmd
                 0x00000000080004d8       0x60 ./Core/Src/i2c-lcd.o
-                0x00000000080004d8                lcd_send_cmd
- .text.lcd_send_data
+                0x00000000080004d8                sendCmd
+ .text.sendData
                 0x0000000008000538       0x60 ./Core/Src/i2c-lcd.o
-                0x0000000008000538                lcd_send_data
- .text.lcd_put_cur
+                0x0000000008000538                sendData
+ .text.putCursor
                 0x0000000008000598       0x3e ./Core/Src/i2c-lcd.o
-                0x0000000008000598                lcd_put_cur
- .text.lcd_init
+                0x0000000008000598                putCursor
+ .text.lcdInit
                 0x00000000080005d6       0x7a ./Core/Src/i2c-lcd.o
-                0x00000000080005d6                lcd_init
- .text.lcd_send_string
+                0x00000000080005d6                lcdInit
+ .text.sendString
                 0x0000000008000650       0x2a ./Core/Src/i2c-lcd.o
-                0x0000000008000650                lcd_send_string
+                0x0000000008000650                sendString
  *fill*         0x000000000800067a        0x2 
  .text.main     0x000000000800067c       0x58 ./Core/Src/main.o
                 0x000000000800067c                main
